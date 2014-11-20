@@ -1,4 +1,4 @@
-midmkt.github.io
+MIDMKT
 ================
 
-Midmkt. We make amazing things.
+We make amazing things.
