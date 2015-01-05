@@ -18,6 +18,7 @@
         background-color: #4CACDF;
         background-image: url("MIDMKT-pattern-bg.png");
         width: 100%;
+        font-size: 20px;
       }
       img {
         display: block;
@@ -25,12 +26,15 @@
         margin-left: auto;
         margin-right: auto;
       }
+      .content {
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+      }
       h1, p {
         text-align: center;
         font-family: Helvetica, Arial, sans-serif;
-        font-size: 20px;
-        margin: .5em auto 0;
-        width: 660px;
+        font-size: 100%;
         text-shadow: rgb(126, 188, 222) 0px 1px 1px; /* just a shade off the background blue */
         color: white;
       }
@@ -44,13 +48,25 @@
       p.inquire {
         margin-top: 1.75em; /* bit less than 2em to offset extra visual space created by ascenders, decenders */
       }
+      @media screen and (max-width: 768px) {
+        .content {
+          width: 80%;
+        }
+        h1, p {
+          font-size: 90%;
+        }
+      }
     </style>
 
   </head>
   <body>
     <img src="MIDMKT-logo-white.png" alt="" />
-    <h1>A design and development studio based in <current weather> San Francisco.</h1>
-    <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
-    <p class="inquire">Currently accepting clients. Inquire within.</p>
+
+    <div class="content">
+      <h1>A design and development studio based in <current weather> San Francisco.</h1>
+      <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
+      <p class="inquire">Currently accepting clients. Inquire within.</p>
+    </div>
+
   </body>
 </html>
