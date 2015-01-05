@@ -25,12 +25,24 @@
         margin-left: auto;
         margin-right: auto;
       }
-      h1 {
+      h1, p {
         text-align: center;
         font-family: Helvetica, Arial, sans-serif;
-        font-weight: 300;
         font-size: 20px;
-        margin-top: 20px;
+        margin: .5em auto 0;
+        width: 660px;
+        text-shadow: rgb(126, 188, 222) 0px 1px 1px; /* just a shade off the background blue */
+        color: white;
+      }
+      h1 {
+        font-weight: bold;
+        margin-top: 2em;
+      }
+      p {
+        font-weight: 300;
+      }
+      p.inquire {
+        margin-top: 1.75em; /* bit less than 2em to offset extra visual space created by ascenders, decenders */
       }
     </style>
 
@@ -39,6 +51,6 @@
     <img src="MIDMKT-logo-white.png" alt="" />
     <h1>A design and development studio based in <current weather> San Francisco.</h1>
     <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
-    <p>Currently accepting clients. Inquire within.</p>
+    <p class="inquire">Currently accepting clients. Inquire within.</p>
   </body>
 </html>
