@@ -15,8 +15,10 @@
       body {
         margin: 0;
         padding: 0;
-        background-color: #f3f50b;
+        background-color: #4CACDF;
+        background-image: url("MIDMKT-pattern-bg.png");
         width: 100%;
+        font-size: 20px;
       }
       img {
         display: block;
@@ -24,19 +26,40 @@
         margin-left: auto;
         margin-right: auto;
       }
-      h1 {
+      .content {
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      h1, p {
         text-align: center;
         font-family: Helvetica, Arial, sans-serif;
+        font-size: 100%;
         font-weight: 300;
-        font-size: 20px;
-        margin-top: 20px;
+        color: white;
+      }
+      h1 {
+        font-weight: bold;
+        margin-top: 2em;
+      }
+      @media screen and (max-width: 768px) {
+        .content {
+          width: 80%;
+        }
+        h1, p {
+          font-size: 90%;
+        }
       }
     </style>
 
   </head>
   <body>
-    <img src="midmkt_transparent.png" alt="" />
-    <h1>We make amazing things.</h1>
-    <h1>(More on that soon.)  </h1>
+    <img src="MIDMKT-logo-white.png" alt="" />
+
+    <div class="content">
+      <h1>A design and development studio based in <current weather> San Francisco.</h1>
+      <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
+    </div>
+
   </body>
 </html>
