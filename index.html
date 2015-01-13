@@ -11,6 +11,8 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
+    <link rel="stylesheet" href="/weather/css/weather-icons.min.css">
+
     <style>
       body {
         margin: 0;
@@ -41,6 +43,7 @@
       h1 {
         font-weight: bold;
         margin-top: 2em;
+        margin-bottom: 1em;
       }
       @media screen and (max-width: 768px) {
         .content {
@@ -70,86 +73,14 @@
         text-decoration: none;
       }
 
-      /*
-        Docs at http://http://simpleweatherjs.com
-
-        Look inspired by http://www.degreees.com/
-        Used for demo purposes.
-
-        Weather icon font from http://fonts.artill.de/collection/artill-weather-icons
-
-        DO NOT hotlink the assets/font included in this demo. If you wish to use the same font icon then download it to your local assets at the link above. If you use the links below odds are at some point they will be removed and your version will break.
-      */
-
-      @font-face {
-          font-family: 'weather';
-          src: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/93/artill_clean_icons-webfont.eot');
-          src: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/93/artill_clean_icons-webfont.eot?#iefix') format('embedded-opentype'),
-               url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/93/artill_clean_icons-webfont.woff') format('woff'),
-               url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/93/artill_clean_icons-webfont.ttf') format('truetype'),
-               url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/93/artill_clean_icons-webfont.svg#artill_clean_weather_iconsRg') format('svg');
-          font-weight: normal;
-          font-style: normal;
-      }
-
-      #weather {
+      #weather-text {
         font-style: italic;
       }
-      #weather i {
-        color: #fff;
-        font-family: weather;
+      #weather-icon i {
         font-style: normal;
         line-height: 1.0;
+        font-size: 0.8em; /* 16px (icon height should match font x-height) */
       }
-
-      .icon-0:before { content: ":"; }
-      .icon-1:before { content: "p"; }
-      .icon-2:before { content: "S"; }
-      .icon-3:before { content: "Q"; }
-      .icon-4:before { content: "S"; }
-      .icon-5:before { content: "W"; }
-      .icon-6:before { content: "W"; }
-      .icon-7:before { content: "W"; }
-      .icon-8:before { content: "W"; }
-      .icon-9:before { content: "I"; }
-      .icon-10:before { content: "W"; }
-      .icon-11:before { content: "I"; }
-      .icon-12:before { content: "I"; }
-      .icon-13:before { content: "I"; }
-      .icon-14:before { content: "I"; }
-      .icon-15:before { content: "W"; }
-      .icon-16:before { content: "I"; }
-      .icon-17:before { content: "W"; }
-      .icon-18:before { content: "U"; }
-      .icon-19:before { content: "Z"; }
-      .icon-20:before { content: "Z"; }
-      .icon-21:before { content: "Z"; }
-      .icon-22:before { content: "Z"; }
-      .icon-23:before { content: "Z"; }
-      .icon-24:before { content: "E"; }
-      .icon-25:before { content: "E"; }
-      .icon-26:before { content: "3"; }
-      .icon-27:before { content: "a"; }
-      .icon-28:before { content: "A"; }
-      .icon-29:before { content: "a"; }
-      .icon-30:before { content: "A"; }
-      .icon-31:before { content: "6"; }
-      .icon-32:before { content: "1"; }
-      .icon-33:before { content: "6"; }
-      .icon-34:before { content: "1"; }
-      .icon-35:before { content: "W"; }
-      .icon-36:before { content: "1"; }
-      .icon-37:before { content: "S"; }
-      .icon-38:before { content: "S"; }
-      .icon-39:before { content: "S"; }
-      .icon-40:before { content: "M"; }
-      .icon-41:before { content: "W"; }
-      .icon-42:before { content: "I"; }
-      .icon-43:before { content: "W"; }
-      .icon-44:before { content: "a"; }
-      .icon-45:before { content: "S"; }
-      .icon-46:before { content: "U"; }
-      .icon-47:before { content: "S"; }
 
     </style>
 
@@ -158,7 +89,7 @@
     <img src="MIDMKT-logo-white.png" alt="" />
 
     <div class="content">
-      <h1>A design and development studio in <span id="weather"></span> San Francisco.</h1>
+      <h1>A design and development studio in <span id="weather-text"></span> <span id="weather-icon"></span> San Francisco.</h1>
       <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
       <p class="inquire">Currently accepting clients. <a href="mailto:hello@midmkt.co?subject=Hello MIDMKT!">Inquire within.</a></p>
     </div>
@@ -166,15 +97,75 @@
   </body>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="js/vendor/simpleWeather/jQuery.simpleWeather.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.min.js"></script>
   <script>
+    // from https://developer.yahoo.com/weather/documentation.html#codes
+    // code + description are from yahoo's API; wi (weather-icon) is what we're using to represent the description
+    var codes = [
+      {code: 0  , description: "tornado", wi: "tornado"},
+      {code: 1  , description: "tropical storm", wi: "night-thunderstorm" },
+      {code: 2  , description: "hurricane", wi: "hurricane" },
+      {code: 3  , description: "severe thunderstorms", wi: "thunderstorm" },
+      {code: 4  , description: "thunderstorms", wi: "storm-showers" },
+      {code: 5  , description: "mixed rain and snow", wi: "snow" },
+      {code: 6  , description: "mixed rain and sleet", wi: "sleet" },
+      {code: 7  , description: "mixed snow and sleet", wi: "sleet" },
+      {code: 8  , description: "freezing drizzle", wi: "sleet" },
+      {code: 9  , description: "drizzle", wi: "sprinkle" },
+      {code: 10 , description: "freezing rain", wi: "sleet" },
+      {code: 11 , description: "showers", wi: "showers" },
+      {code: 12 , description: "showers", wi: "showers" },
+      {code: 13 , description: "snow flurries", wi: "snow" },
+      {code: 14 , description: "light snow showers", wi: "snow" },
+      {code: 15 , description: "blowing snow", wi: "snow-wind" },
+      {code: 16 , description: "snow", wi: "snow" },
+      {code: 17 , description: "hail", wi: "hail" },
+      {code: 18 , description: "sleet", wi: "sleet" },
+      {code: 19 , description: "dust", wi: "dust" },
+      {code: 20 , description: "foggy", wi: "fog" },
+      {code: 21 , description: "haze", wi: "day-haze" },
+      {code: 22 , description: "smoky", wi: "smoke" },
+      {code: 23 , description: "blustery", wi: "beafort-5" /* not exact: Beafort 5 is 17-21 knots; blustery is 15-25 mph or 13-21 knots */ },
+      {code: 24 , description: "windy", wi: "beafort-6" /* not exact:  B6 is 22-27 knots; NOAA defines windy as 20-30mph, or 17-26 knots */},
+      {code: 25 , description: "cold", wi: "snowflake-cold" },
+      {code: 26 , description: "cloudy", wi: "cloudy" },
+      {code: 27 , description: "mostly cloudy (night)", wi: "night-cloudy" },
+      {code: 28 , description: "mostly cloudy (day)", wi: "day-cloudy" },
+      {code: 29 , description: "partly cloudy (night)", wi: "night-partly-cloudy" },
+      {code: 30 , description: "partly cloudy (day)", wi: "day-sunny-overcast" },
+      {code: 31 , description: "clear (night)", wi: "night-clear" },
+      {code: 32 , description: "sunny", wi: "day-sunny" },
+      {code: 33 , description: "fair (night)", wi: "night-clear" },
+      {code: 34 , description: "fair (day)", wi: "day-sunny" },
+      {code: 35 , description: "mixed rain and hail", wi: "hail" },
+      {code: 36 , description: "hot", wi: "hot" },
+      {code: 37 , description: "isolated thunderstorms", wi: "storm-showers" },
+      {code: 38 , description: "scattered thunderstorms", wi: "storm-showers" },
+      {code: 39 , description: "scattered thunderstorms", wi: "storm-showers" },
+      {code: 40 , description: "scattered showers", wi: "showers" },
+      {code: 41 , description: "heavy snow", wi: "snow" },
+      {code: 42 , description: "scattered snow showers", wi: "snow" },
+      {code: 43 , description: "heavy snow", wi: "snow" },
+      {code: 44 , description: "partly cloudy", wi: "night-cloudy" },
+      {code: 45 , description: "thundershowers", wi: "storm-showers" },
+      {code: 46 , description: "snow showers", wi: "snow" },
+      {code: 47 , description: "isolated thundershowers", wi: "storm-showers" }
+    ];
+
   $(document).ready(function() {
       $.simpleWeather({
         location: 'San Francisco, CA',
         woeid: '',
         unit: 'f',
         success: function(weather) {
-          html = '<span class="currently">'+weather.currently.toLowerCase()+'</span> <i class="icon-'+weather.code+'"></i>';
-          $("#weather").html(html);
+          var text = '<span class="currently">'+weather.currently.toLowerCase()+'</span>';
+          $("#weather-text").html(text);
+
+          var extra = _.find(codes, {code: parseInt(weather.code)});
+          if (extra) {
+            var icon = '<i class="wi wi-'+extra.wi+'"></i>';
+            $("#weather-icon").html(icon);
+          }
         },
         error: function(error) {
           console.log("problem fetching weather: " +error);
@@ -182,4 +173,5 @@
       });
     });
   </script>
+
 </html>
