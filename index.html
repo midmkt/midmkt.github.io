@@ -147,12 +147,24 @@
     ];
 
   $(document).ready(function() {
+
+      var adjectivify = function (condition) {
+        switch (condition) {
+          case "fog":
+            return "foggy";
+          default:
+            return condition;
+        }
+      }
+
       $.simpleWeather({
         location: 'San Francisco, CA',
         woeid: '',
         unit: 'f',
         success: function(weather) {
-          var text = '<span class="currently">'+weather.currently.toLowerCase()+'</span>';
+          var condition = weather.currently.toLowerCase();
+          condition = adjectivify(condition);
+          var text = '<span class="currently">'+condition+'</span>';
           $("#weather-text").html(text);
 
           var extra = _.find(codes, {code: parseInt(weather.code)});
