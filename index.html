@@ -91,7 +91,6 @@
 
   </body>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-  <script src="js/vendor/simpleWeather/jQuery.simpleWeather.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.min.js"></script>
   <script>
     // from https://developer.yahoo.com/weather/documentation.html#codes
@@ -147,7 +146,7 @@
       {code: 47 , description: "isolated thundershowers", adjective: 'stormy', wi: "storm-showers" }
     ];
 
-    function showWeather(data) {
+    var showWeather = function(data) {
         if (typeof data === 'number') {
             var weather = _.find(codes, {code: data});
             var condition = '<span class="currently">'+weather.adjective+'</span>';
