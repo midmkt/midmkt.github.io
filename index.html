@@ -153,14 +153,11 @@
         woeid: '',
         unit: 'f',
         success: function(weather) {
-          var condition = weather.currently.toLowerCase();
-          condition = adjectivify(condition);
-          var text = '<span class="currently">'+condition+'</span>';
-          $("#weather-text").html(text);
-
-          var extra = _.find(codes, {code: parseInt(weather.code)});
-          if (extra) {
-            var icon = '<i class="wi wi-'+extra.wi+'"></i>';
+          var data = _.find(codes, {code: parseInt(weather.code)});
+          if (data) {
+            var condition = '<span class="currently">'+data.adjective+'</span>';
+            var icon = '<i class="wi wi-'+data.wi+'"></i>';
+            $("#weather-text").html(condition);
             $("#weather-icon").html(icon);
           }
         },
