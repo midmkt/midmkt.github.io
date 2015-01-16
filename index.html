@@ -148,16 +148,6 @@
     ];
 
   $(document).ready(function() {
-
-      var adjectivify = function (condition) {
-        switch (condition) {
-          case "fog":
-            return "foggy";
-          default:
-            return condition;
-        }
-      }
-
       $.simpleWeather({
         location: 'San Francisco, CA',
         woeid: '',
