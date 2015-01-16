@@ -50,6 +50,25 @@
           font-size: 90%;
         }
       }
+      p.inquire {
+        margin-top: 1.75em; /* bit less than 2em to offset extra visual space created by ascenders, decenders */
+      }
+      .inquire a {
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.6);
+        color: white;
+        padding-bottom: 0.15em;
+        text-decoration: none;
+
+        -webkit-transition: all .33s ease;
+        -moz-transition: all .33s ease;
+        -ms-transition: all .33s ease;
+        -o-transition: all .33s ease;
+        transition: all .33s ease;
+      }
+      .inquire a:hover, .inquire a:focus {
+        border-bottom: 1px solid #fff;
+        text-decoration: none;
+      }
     </style>
 
   </head>
@@ -59,6 +78,7 @@
     <div class="content">
       <h1>A design and development studio based in <current weather> San Francisco.</h1>
       <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
+      <p class="inquire">Currently accepting clients. <a href="mailto:hello@midmkt.co?subject=Hello MIDMKT!">Inquire within.</a></p>
     </div>
 
   </body>
