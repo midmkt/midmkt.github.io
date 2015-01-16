@@ -84,7 +84,7 @@
     <img src="MIDMKT-logo-white.png" alt="" />
 
     <div class="content">
-      <h1>A design and development studio in <span id="weather-text"></span> <span id="weather-icon"></span> San Francisco.</h1>
+      <h1>A design and development studio in <span id="weather" style="display:none;"></span> San Francisco.</h1>
       <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
       <p class="inquire">Currently accepting clients. <a href="mailto:hello@midmkt.co?subject=Hello MIDMKT!">Inquire within.</a></p>
     </div>
@@ -147,24 +147,27 @@
       {code: 47 , description: "isolated thundershowers", adjective: 'stormy', wi: "storm-showers" }
     ];
 
-  $(document).ready(function() {
-      $.simpleWeather({
-        location: 'San Francisco, CA',
-        woeid: '',
-        unit: 'f',
-        success: function(weather) {
-          var data = _.find(codes, {code: parseInt(weather.code)});
-          if (data) {
-            var condition = '<span class="currently">'+data.adjective+'</span>';
-            var icon = '<i class="wi wi-'+data.wi+'"></i>';
-            $("#weather-text").html(condition);
-            $("#weather-icon").html(icon);
-          }
-        },
-        error: function(error) {
-          console.log("problem fetching weather: " +error);
+    function showWeather(data) {
+        if (typeof data === 'number') {
+            var weather = _.find(codes, {code: data});
+            var condition = '<span class="currently">'+weather.adjective+'</span>';
+            var icon = '<i class="wi wi-'+weather.wi+'"></i>';
+            $("#weather").html(condition+' '+icon);
+            $("#weather").fadeIn('fast');
+        } else {
+            console.log('Failed. Expected weatherCode to be a number. It isn\`t.');
         }
-      });
+    }
+
+    $(document).ready(function() {
+        var weatherURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22san%20francisco%20%2C%20ca%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+        var getWeather = $.getJSON( weatherURL, function(data) {
+            var weatherCode = parseInt(data.query.results.channel.item.condition.code);
+            showWeather(weatherCode);
+        })
+        .fail(function() {
+            console.log('Failed. Couldn\'t reach weather API.');
+        });
     });
   </script>
 
