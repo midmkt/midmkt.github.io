@@ -91,6 +91,12 @@
         min-width: 25px;
       }
 
+      .hide {
+         position: absolute !important;
+         top: -9999px !important;
+         left: -9999px !important;
+      }
+
     </style>
     <script>
         document.getElementsByTagName('html')[0].className += ' js';
@@ -99,6 +105,9 @@
   </head>
   <body>
     <img src="MIDMKT-logo-white.png" alt="" />
+    <div class="font_preload hide">
+      <i class="wi wi-fog"></i>
+    </div>
 
     <div class="content">
       <h1>A design and development studio in <span id="weather"></span> San Francisco.</h1>
