@@ -73,16 +73,6 @@
         display: none;
       }
 
-      html.js #weather {
-        display: inline-block;
-        -webkit-transition: all 0.25s ease-in;
-        -moz-transition: all 0.25s ease-in;
-        -ms-transition: all 0.25s ease-in;
-        -o-transition: all 0.25s ease-in;
-        transition: all 0.25s ease-in;
-        min-width: 100px;
-      }
-
       #weather-text {
         font-style: italic;
       }
@@ -92,10 +82,16 @@
         font-size: 0.8em; /* 16px (icon height should match font x-height) */
       }
 
-      .shrunk {
-        -webkit-transform: scale(0);
-        -ms-transform: scale(0);
-        transform: scale(0);
+      .js .content {
+        -webkit-transition: all 0.25s ease-in;
+        -moz-transition: all 0.25s ease-in;
+        -ms-transition: all 0.25s ease-in;
+        -o-transition: all 0.25s ease-in;
+        transition: all 0.5s ease-in;
+        opacity: 0;
+      }
+      .js .wi {
+        min-width: 25px;
       }
 
     </style>
@@ -108,7 +104,7 @@
     <img src="MIDMKT-logo-white.png" alt="" />
 
     <div class="content">
-      <h1>A design and development studio in <div class="shrunk" id="weather"></div> San Francisco.</h1>
+      <h1>A design and development studio in <span id="weather"></span> San Francisco.</h1>
       <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
       <p class="inquire">Currently accepting clients. <a href="mailto:hello@midmkt.co?subject=Hello MIDMKT!">Inquire within.</a></p>
     </div>
@@ -175,12 +171,15 @@
             var weather = _.find(codes, {code: data});
             var condition = '<span class="currently">'+weather.adjective+'</span>';
             var icon = '<i class="wi wi-'+weather.wi+'"></i>';
-            $("#weather").html(condition+' '+icon);
-            $("#weather").fadeIn('fast');
-            $("#weather").toggleClass("shrunk");
-            $("#weather").css("min-width", "0");
+            $("#weather").html(condition+' '+icon).fadeIn('fast', function() {
+              window.setTimeout(function() {
+                $('.content').css('opacity', '1');
+              }, 500);
+            });
         } else {
             console.log('Failed. Expected weatherCode to be a number. It isn\`t.');
+            $('#weather').remove();
+            $('.content').css('opacity', '1');
         }
     }
 
