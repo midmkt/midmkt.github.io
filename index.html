@@ -1,15 +1,12 @@
 <html>
+<meta charset="utf-8">
   <head>
     <title>MIDMKT</title>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/weather/css/weather-icons.min.css">
 
     <style>
       body {
@@ -41,6 +38,7 @@
       h1 {
         font-weight: bold;
         margin-top: 2em;
+        margin-bottom: 1em;
       }
       @media screen and (max-width: 768px) {
         .content {
@@ -69,6 +67,16 @@
         border-bottom: 1px solid #fff;
         text-decoration: none;
       }
+
+      #weather-text {
+        font-style: italic;
+      }
+      #weather-icon i {
+        font-style: normal;
+        line-height: 1.0;
+        font-size: 0.8em; /* 16px (icon height should match font x-height) */
+      }
+
     </style>
 
   </head>
@@ -76,10 +84,90 @@
     <img src="MIDMKT-logo-white.png" alt="" />
 
     <div class="content">
-      <h1>A design and development studio based in <current weather> San Francisco.</h1>
+      <h1>A design and development studio in <span id="weather" style="display:none;"></span> San Francisco.</h1>
       <p>We build beautiful things for the web. Our team includes illustrators, UI/UX designers and experienced full stack developers.</p>
       <p class="inquire">Currently accepting clients. <a href="mailto:hello@midmkt.co?subject=Hello MIDMKT!">Inquire within.</a></p>
     </div>
 
   </body>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.min.js"></script>
+  <script>
+    // from https://developer.yahoo.com/weather/documentation.html#codes
+    // code + description are from yahoo's API; wi (weather-icon) is what we're using to represent the description
+    var codes = [
+      {code: 0  , description: "tornado", adjective: 'blustery', wi: "tornado"},
+      {code: 1  , description: "tropical storm", adjective: 'stormy', wi: "night-thunderstorm" },
+      {code: 2  , description: "hurricane", adjective: 'windswept', wi: "hurricane" },
+      {code: 3  , description: "severe thunderstorms", adjective: 'stormy', wi: "thunderstorm" },
+      {code: 4  , description: "thunderstorms", adjective: 'stormy', wi: "storm-showers" },
+      {code: 5  , description: "mixed rain and snow", adjective: 'wintry', wi: "snow" },
+      {code: 6  , description: "mixed rain and sleet", adjective: 'wintry', wi: "sleet" },
+      {code: 7  , description: "mixed snow and sleet", adjective: 'wintry', wi: "sleet" },
+      {code: 8  , description: "freezing drizzle", adjective: 'drizzly', wi: "sleet" },
+      {code: 9  , description: "drizzle", adjective: 'drizzly', wi: "sprinkle" },
+      {code: 10 , description: "freezing rain", adjective: 'rainy', wi: "sleet" },
+      {code: 11 , description: "showers", adjective: 'rainy', wi: "showers" },
+      {code: 12 , description: "showers", adjective: 'rainy', wi: "showers" },
+      {code: 13 , description: "snow flurries", adjective: 'snowy', wi: "snow" },
+      {code: 14 , description: "light snow showers", adjective: 'snowy', wi: "snow" },
+      {code: 15 , description: "blowing snow", adjective: 'snowy', wi: "snow-wind" },
+      {code: 16 , description: "snow", adjective: 'snowy', wi: "snow" },
+      {code: 17 , description: "hail", adjective: 'rainy', wi: "hail" },
+      {code: 18 , description: "sleet", adjective: 'rainy', wi: "sleet" },
+      {code: 19 , description: "dust", adjective: 'dusty', wi: "dust" },
+      {code: 20 , description: "foggy", adjective: 'foggy', wi: "fog" },
+      {code: 21 , description: "haze", adjective: 'hazey', wi: "day-haze" },
+      {code: 22 , description: "smoky", adjective: 'smoky', wi: "smoke" },
+      {code: 23 , description: "blustery", adjective: 'blustery', wi: "beafort-5" /* not exact: Beafort 5 is 17-21 knots; blustery is 15-25 mph or 13-21 knots */ },
+      {code: 24 , description: "windy", adjective: 'windy', wi: "beafort-6" /* not exact:  B6 is 22-27 knots; NOAA defines windy as 20-30mph, or 17-26 knots */},
+      {code: 25 , description: "cold", adjective: 'chilly', wi: "snowflake-cold" },
+      {code: 26 , description: "cloudy", adjective: 'cloudy', wi: "cloudy" },
+      {code: 27 , description: "mostly cloudy (night)", adjective: 'cloudy', wi: "night-cloudy" },
+      {code: 28 , description: "mostly cloudy (day)", adjective: 'cloudy', wi: "day-cloudy" },
+      {code: 29 , description: "partly cloudy (night)", adjective: 'cloudy', wi: "night-partly-cloudy" },
+      {code: 30 , description: "partly cloudy (day)", adjective: 'cloudy', wi: "day-sunny-overcast" },
+      {code: 31 , description: "clear (night)", adjective: 'peaceful', wi: "night-clear" },
+      {code: 32 , description: "sunny", adjective: 'sunny', wi: "day-sunny" },
+      {code: 33 , description: "fair (night)", adjective: 'beautiful', wi: "night-clear" },
+      {code: 34 , description: "fair (day)", adjective: 'beautiful', wi: "day-sunny" },
+      {code: 35 , description: "mixed rain and hail", adjective: 'rainy', wi: "hail" },
+      {code: 36 , description: "hot", adjective: 'sweltering', wi: "hot" },
+      {code: 37 , description: "isolated thunderstorms", adjective: 'stormy', wi: "storm-showers" },
+      {code: 38 , description: "scattered thunderstorms", adjective: 'stormy', wi: "storm-showers" },
+      {code: 39 , description: "scattered thunderstorms", adjective: 'stormy', wi: "storm-showers" },
+      {code: 40 , description: "scattered showers", adjective: 'stormy', wi: "showers" },
+      {code: 41 , description: "heavy snow", adjective: 'snowy', wi: "snow" },
+      {code: 42 , description: "scattered snow showers", adjective: 'stormy', wi: "snow" },
+      {code: 43 , description: "heavy snow", adjective: 'snowy', wi: "snow" },
+      {code: 44 , description: "partly cloudy", adjective: 'cloudy', wi: "night-cloudy" },
+      {code: 45 , description: "thundershowers", adjective: 'stormy',  wi: "storm-showers" },
+      {code: 46 , description: "snow showers", adjective: 'snowy', wi: "snow" },
+      {code: 47 , description: "isolated thundershowers", adjective: 'stormy', wi: "storm-showers" }
+    ];
+
+    var showWeather = function(data) {
+        if (typeof data === 'number') {
+            var weather = _.find(codes, {code: data});
+            var condition = '<span class="currently">'+weather.adjective+'</span>';
+            var icon = '<i class="wi wi-'+weather.wi+'"></i>';
+            $("#weather").html(condition+' '+icon);
+            $("#weather").fadeIn('fast');
+        } else {
+            console.log('Failed. Expected weatherCode to be a number. It isn\`t.');
+        }
+    }
+
+    $(document).ready(function() {
+        var weatherURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22san%20francisco%20%2C%20ca%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+        var getWeather = $.getJSON( weatherURL, function(data) {
+            var weatherCode = parseInt(data.query.results.channel.item.condition.code);
+            showWeather(weatherCode);
+        })
+        .fail(function() {
+            console.log('Failed. Couldn\'t reach weather API.');
+        });
+    });
+  </script>
+
 </html>
